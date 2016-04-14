@@ -1,6 +1,8 @@
 class Event < ActiveRecord::Base
   belongs_to :organizers, class_name: "User"
 
+  has_many :attendences
+  has_many :users, :through => :attendances
   has_many :taggings
   has_many :tags, through: :taggings
 

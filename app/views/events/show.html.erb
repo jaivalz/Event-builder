@@ -53,5 +53,9 @@
 
 <%=raw @event.tags.map(&:name).map { |t| link_to t, tag_path(t) }.join(', ') %>
 <br />
+
+<%= link_to "Join", event_join_path(:event_id => @event.id), :class=>"btn btn-success btn-small" %>
+<br />
+
 <%= link_to 'Edit', edit_event_path(@event) %> |
 <%= link_to 'Back', events_path %>
