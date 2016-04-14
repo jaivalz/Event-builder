@@ -25,4 +25,16 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def self.pending_requests(event_id)
+    Attendance.pending.where(event_id: event_id)
+  end
+
+  def self.show_accepted_attendees(event_id)
+    Attendance.accepted.where(event_id: event_id)
+  end
+
+   def self.show_my_events(organizer_id)
+    Event.where(organizer_id: organizer_id)
+  end
+
 end
