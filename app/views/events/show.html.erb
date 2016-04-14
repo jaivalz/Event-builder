@@ -10,10 +10,6 @@
   <%= @event.start_date %>
 </p>
 
-<p>
-  <strong>End date:</strong>
-  <%= @event.end_date %>
-</p>
 
 <p>
   <strong>Location:</strong>
@@ -31,51 +27,37 @@
 </p>
 
 <p>
-  <strong>Organizer:</strong>
-  <%= @event.organizer_id %>
+  <strong>Tags:</strong>
+  <%=raw @event.tags.map(&:name).map { |t| link_to t, tag_path(t) }.join(', ') %>
 </p>
 
-<p>
-  <strong>Created at:</strong>
-  <%= @event.created_at %>
-</p>
-
-<p>
-  <strong>Updated at:</strong>
-  <%= @event.updated_at %>
-</p>
-
-<br />
-
-<%= @event.all_tags %>
-
-<br />
-
-<%=raw @event.tags.map(&:name).map { |t| link_to t, tag_path(t) }.join(', ') %>
-<br />
-
-<%= link_to "Join", event_join_path(:event_id => @event.id), :class=>"btn btn-success btn-small" %>
-<br />
-
-<% if user_signed_in? && @event.organizer_id == current_user.id %>
-  <label> Join requests </label>
-  <% if @pending_requests.present? %>
-    <% @pending_requests.each do |p| %>
-      <%= p.user.email %>
-      <br />
-      <%= link_to 'Accept', event_accept_request_path(:event_id => @event.id, :attendance_id => p.id), :class => "btn btn-success btn-small" %>
-      <%= link_to 'Reject', event_reject_request_path(:event_id => @event.id, :attendance_id => p.id), :class => "btn btn-danger btn-small" %>
-    <% end %>
-    <% else %>
-      <p>No pending requests</p>
-    <% end %>
-    <% end %>
-    <br />
+<% if user_signed_in? && @event.organizer_id == current_user.id%>
+<label>Join Requests</label>
+<% if @pending_requests.present? %>
+ <% @pending_requests.each do |p|%>
+  <%= p.user.email%>
+   <%= link_to 'Accept', event_accept_request_path(:event_id => @event.id, :attendance_id => p.id), :class=>"btn btn-success btn-small" %>
+   <%= link_to 'Reject', event_reject_request_path(:event_id => @event.id, :attendance_id => p.id), :class=>"btn btn-danger btn-small" %>
+ <%end%>
+<%else%>
+  <p>No Pending Requests for this event</p>
+<%end%>
+<%end%>
+<br/>
 
 <label>Attendees</label>
-<% @attendees.each do |a| %>
-      <%= a.user.email %>
-      <% end %>
+<% @attendees.each do |a|%>
+  <%= a.user.email%>
+<%end%>
 
-<%= link_to 'Edit', edit_event_path(@event) %> |
-<%= link_to 'Back', events_path %>
+<p>
+  <strong>Organizer:</strong>
+  <%= @event_owner.email %>
+</p>
+ <%= link_to "Join", event_join_path(:event_id => @event.id), :class=>"btn btn-success btn-small" %>
+
+ <%= link_to 'All Events', events_path, :class=>"btn btn-info btn-small" %>
+ <% if user_signed_in? && @event.organizer_id == current_user.id%>
+   <%= link_to 'Edit', edit_event_path(@event), :class=>"btn btn-primary btn-small" %>
+   <%= link_to 'Delete', @event, method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-danger btn-small" %>
+  <%end%>

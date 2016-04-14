@@ -17,6 +17,8 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
+    @event_owner = @event.event_owner(@event.organizer_id)
+    @pending_requests = Attendance.pending.where(event_id: @event.id)
     @attendees = Attendance.accepted.where(event_id: @event.id)
   end
 
@@ -24,6 +26,11 @@ class EventsController < ApplicationController
   def new
     @event = Event.new
   end
+
+  def my_events
+    @events = Event.show_accepted_attendees(current_user.id)
+  end
+
 
   # GET /events/1/edit
   def edit
@@ -84,6 +91,11 @@ class EventsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def tag_cloud
+    @tags = Event.tag_counts_on(:tags)
+  end
+
 
   def join
     @attendance = Attendance.join_event(current_user.id, params[:event_id], 'request_sent')

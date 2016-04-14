@@ -1,7 +1,9 @@
 class Event < ActiveRecord::Base
+
   belongs_to :organizers, class_name: "User"
 
-  has_many :attendences
+
+  has_many :attendances
   has_many :users, :through => :attendances
   has_many :taggings
   has_many :tags, through: :taggings
@@ -12,7 +14,7 @@ class Event < ActiveRecord::Base
 
   def self.tag_counts
     Tag.select("tags.name, count(taggings.tag_id) as count").
-    joins(:taggings).group("taggings.tag_id")
+      joins(:taggings).group("taggings.tag_id")
   end
 
   def all_tags
@@ -23,6 +25,10 @@ class Event < ActiveRecord::Base
     self.tags = names.split(",").map do |n|
       Tag.where(name: n.strip).first_or_create!
     end
+  end
+
+  def event_owner(organizer_id)
+    User.find_by id: organizer_id
   end
 
   def self.pending_requests(event_id)
@@ -36,5 +42,4 @@ class Event < ActiveRecord::Base
    def self.show_my_events(organizer_id)
     Event.where(organizer_id: organizer_id)
   end
-
 end
